@@ -36,23 +36,24 @@ def loops(curr, grid):
         di, dj = deltas[d]
         new = ni, nj = i + di, j + dj
         if not 0 <= ni < H or not 0 <= nj < W:
-            return False
+            return False, cache
         if grid[ni][nj] == "#":
             d = (d + 1) % 4
         else:
             curr = new
-    return True
+    return True, cache
 
-# Very slow, takes about a minute
+start_loops, cache = loops(start, grid)
+assert not start_loops, "Start position loops"
 
 total = 0
 grid = [*map(list, grid)]
-for row in tqdm(grid):
+for i,row in tqdm(enumerate(grid), total=H):
     for j, col in enumerate(row):
-        if col == "#":
+        if (i,j) not in cache:
             continue
         row[j] = "#"
-        if loops(start, grid):
+        if loops(start, grid)[0]:
             total += 1
         row[j] = "."
 
