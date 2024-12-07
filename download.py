@@ -94,9 +94,7 @@ def download_day(day: int, year: int, pattern: str = "Day_{day}") -> None:
 
     if response.status_code == 200:
         if not (folder / "input.txt").exists():
-            (folder / "input.txt").write_text(
-                response.text.rstrip()
-            )
+            (folder / "input.txt").write_text(response.text.rstrip())
     else:
         print(f"Failed to download data from {url}")
 
