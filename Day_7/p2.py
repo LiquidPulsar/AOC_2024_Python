@@ -1,5 +1,4 @@
 from pathlib import Path
-from tqdm import tqdm
 
 HOME = Path(__file__).parent
 
@@ -18,7 +17,7 @@ def try_fix(curr: float, parts: list[int]):
     if curr < 0:
         return False
 
-    a, *rest = parts
+    *rest, a = parts
     return (
         try_fix(curr - a, rest)
         or try_fix(curr / a, rest)
@@ -28,9 +27,9 @@ def try_fix(curr: float, parts: list[int]):
 
 with open(HOME / "input.txt") as f:
     total = 0
-    for line in tqdm(f):
-        res, parts = line.split(":")
-        res = int(res)
-        if try_fix(res, [*map(int, parts.split()[::-1])]):
+    for line in f:
+        _res, parts = line.split(":")
+        res = int(_res)
+        if try_fix(res, [*map(int, parts.split())]):
             total += res
-    print(total)  # 12498581459
+    print(total)
