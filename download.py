@@ -82,8 +82,8 @@ def download_day(day: int, year: int, pattern: str = "Day_{day}") -> None:
 
     if response.status_code == 200:
         data = response.text
-        with open(folder / "test.txt", "w") as file:
-            file.write(
+        if not (folder / "test.txt").exists():
+            (folder / "test.txt").write_text(
                 clean_data(data.split("<pre><code>")[1].split("</code></pre>")[0])
             )
     else:
@@ -93,19 +93,23 @@ def download_day(day: int, year: int, pattern: str = "Day_{day}") -> None:
     response = requests.get(url, cookies={"session": COOKIE})
 
     if response.status_code == 200:
-        with open(folder / "input.txt", "w") as file:
-            file.write(response.text.rstrip())
+        if not (folder / "input.txt").exists():
+            (folder / "input.txt").write_text(
+                response.text.rstrip()
+            )
     else:
         print(f"Failed to download data from {url}")
 
-    template = dedent("""\
+    template = dedent(
+        """\
     from pathlib import Path
 
     HOME = Path(__file__).parent
 
     with open(HOME/"test.txt") as f:
         pass
-    """)
+    """
+    )
 
     for part in range(1, 3):
         path = folder / f"p{part}.py"
