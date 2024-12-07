@@ -1,11 +1,9 @@
-from glob import glob
-import html
-import re
-from typing import Iterable
-import requests, os
+import html, os, re, requests
 from argparse import ArgumentParser, ArgumentTypeError
 from datetime import datetime
+from glob import glob
 from pathlib import Path
+from textwrap import dedent
 
 
 HOME = Path(__file__).parent
@@ -100,14 +98,14 @@ def download_day(day: int, year: int, pattern: str = "Day_{day}") -> None:
     else:
         print(f"Failed to download data from {url}")
 
-    template = """\
+    template = dedent("""\
     from pathlib import Path
 
     HOME = Path(__file__).parent
 
     with open(HOME/"test.txt") as f:
         pass
-    """
+    """)
 
     for part in range(1, 3):
         path = folder / f"p{part}.py"
