@@ -3,6 +3,8 @@ from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
 
+# WINDOWS: for ($N = 1; $N -le ???; $N++) { py download.py -d $N }
+
 HOME = Path(__file__).parent
 COOKIE = (HOME/"cookie.txt").read_text().strip()
 
