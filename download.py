@@ -1,4 +1,5 @@
 from glob import glob
+import html
 import re
 from typing import Iterable
 import requests, os
@@ -59,7 +60,7 @@ COOKIE = args.cookie.read_text().strip()
 
 year: int | tuple[int, int] = args.year
 day: int | tuple[int, int] = args.day
-PATTERN: str = args.pattern or ("{year}/Day_{day}" if year == YEAR else "Day_{day}")
+PATTERN: str = args.pattern or ("{year}/Day_{day}" if year != YEAR else "Day_{day}")
 
 
 def pat_to_regex(pattern):
@@ -68,6 +69,11 @@ def pat_to_regex(pattern):
         r"\{year\}", r"(?P<year>\d+)"
     ).replace(r"\{day\}", r"(?P<day>\d+)")
     return re.compile(named_regex_pattern)
+
+
+def clean_data(data: str) -> str:
+    return re.sub(r"<.*?>", "", html.unescape(data.removesuffix("\n")))
+
 
 def download_day(day: int, year: int, pattern: str = "Day_{day}") -> None:
     folder = HOME / pattern.format(day=day, year=year)
@@ -80,9 +86,7 @@ def download_day(day: int, year: int, pattern: str = "Day_{day}") -> None:
         data = response.text
         with open(folder / "test.txt", "w") as file:
             file.write(
-                data.split("<pre><code>")[1]
-                .split("</code></pre>")[0]
-                .removesuffix("\n")
+                clean_data(data.split("<pre><code>")[1].split("</code></pre>")[0])
             )
     else:
         print(f"Failed to download data from {url}")
@@ -91,9 +95,8 @@ def download_day(day: int, year: int, pattern: str = "Day_{day}") -> None:
     response = requests.get(url, cookies={"session": COOKIE})
 
     if response.status_code == 200:
-        data = response.text
         with open(folder / "input.txt", "w") as file:
-            file.write(data.removesuffix("\n"))
+            file.write(response.text.rstrip())
     else:
         print(f"Failed to download data from {url}")
 
@@ -111,6 +114,7 @@ def download_day(day: int, year: int, pattern: str = "Day_{day}") -> None:
         if not path.exists():
             with open(path, "w") as file:
                 file.write(template)
+
 
 # If match, ignore all else
 if args.match is not None:
