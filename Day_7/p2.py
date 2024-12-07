@@ -1,6 +1,8 @@
-from pathlib import Path
+# from pathlib import Path
 
-HOME = Path(__file__).parent
+# HOME = Path(__file__).parent
+
+# hyperfine "pypy --jit max_unroll_recursion=0 p2.py" --warmup 5
 
 def unconc(a: int, b: int):
     x = 1
@@ -26,7 +28,7 @@ def try_fix(curr: int, parts: tuple[int, ...], i: int):
     )
 
 
-with open(HOME / "input.txt") as f:
+with open("input.txt") as f: # HOME / "input.txt"
     total = 0
     for line in f:
         _res, _parts = line.split(":")
