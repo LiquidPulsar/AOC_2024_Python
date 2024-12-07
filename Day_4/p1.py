@@ -25,13 +25,13 @@ with open(HOME / "input.txt") as f:
                 if all(data[y + i][x] == target[i] for i in range(len(target))):
                     # print("col",y,x)
                     total += 1
-                if x + len(target) <= X:
-                    if all(data[y + i][x + i] == target[i] for i in range(len(target))):
-                        # print("diag",y,x)
-                        total += 1
-                if x - len(target) + 1 >= 0:
-                    if all(data[y + i][x - i] == target[i] for i in range(len(target))):
-                        # print("diag2",y,x)
-                        total += 1
+                if x + len(target) <= X and all(
+                    data[y + i][x + i] == target[i] for i in range(len(target))
+                ):
+                    total += 1
+                if x - len(target) >= -1 and all(
+                    data[y + i][x - i] == target[i] for i in range(len(target))
+                ):
+                    total += 1
 
     print(total)
