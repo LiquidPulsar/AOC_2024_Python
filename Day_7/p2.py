@@ -3,8 +3,11 @@ from pathlib import Path
 HOME = Path(__file__).parent
 
 def unconc(a: int, b: int):
-    bs = str(b)
-    return a // (10 ** len(bs)) if str(a).endswith(bs) else -1
+    x = 1
+    while x < b:
+        x *= 10
+    q,r = divmod(a, x)
+    return q if r == b else -1
 
 def try_fix(curr: int, parts: tuple[int, ...], i: int):
     # Do this first, as triggered 19654 times
