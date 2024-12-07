@@ -2,34 +2,33 @@ from pathlib import Path
 
 HOME = Path(__file__).parent
 
-
-def unconc(a: float, b: int):
-    ia = int(a)
-    if a != ia:
-        return -1
+def unconc(a: int, b: int):
     bs = str(b)
-    return a // (10 ** len(bs)) if str(ia).endswith(bs) else -1
+    return a // (10 ** len(bs)) if str(a).endswith(bs) else -1
 
-
-def try_fix(curr: float, parts: list[int]):
-    if not parts:
+def try_fix(curr: int, parts: tuple[int, ...], i: int):
+    # Do this first, as triggered 19654 times
+    if i < 0:
         return curr == 0
+    # Do this second, as triggered 18960 times (0.964)
     if curr < 0:
         return False
 
-    *rest, a = parts
+    a = parts[i]
+    q,r = divmod(curr, a)
     return (
-        try_fix(curr - a, rest)
-        or try_fix(curr / a, rest)
-        or try_fix(unconc(curr, a), rest)
+        not r and try_fix(q, parts, i - 1)
+        or try_fix(unconc(curr, a), parts, i - 1)
+        or try_fix(curr - a, parts, i - 1)
     )
 
 
 with open(HOME / "input.txt") as f:
     total = 0
     for line in f:
-        _res, parts = line.split(":")
+        _res, _parts = line.split(":")
+        parts = tuple(map(int, _parts.split()))
         res = int(_res)
-        if try_fix(res, [*map(int, parts.split())]):
+        if try_fix(res, parts, len(parts) - 1):
             total += res
     print(total)
