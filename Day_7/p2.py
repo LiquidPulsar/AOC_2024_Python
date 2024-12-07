@@ -4,7 +4,7 @@ HOME = Path(__file__).parent
 
 def unconc(a: int, b: int):
     x = 1
-    while x < b:
+    while x <= b:
         x *= 10
     q,r = divmod(a, x)
     return q if r == b else -1
