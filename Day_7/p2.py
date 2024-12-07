@@ -1,33 +1,36 @@
 from pathlib import Path
-from operator import add, mul
-
 from tqdm import tqdm
 
 HOME = Path(__file__).parent
 
-def conc(a:int,b:int):
-    return int(str(a)+str(b))
 
-def try_fix(res:int, curr:int, parts:list[int]):
+def unconc(a: float, b: int):
+    ia = int(a)
+    if a != ia:
+        return -1
+    bs = str(b)
+    return a // (10 ** len(bs)) if str(ia).endswith(bs) else -1
+
+
+def try_fix(curr: float, parts: list[int]):
     if not parts:
-        return curr == res
-    if curr > res:
+        return curr == 0
+    if curr < 0:
         return False
-    
-    a,*rest = parts
-    return any(
-        try_fix(res, f(curr,a),rest)
-        for f in (add,mul,conc)
+
+    a, *rest = parts
+    return (
+        try_fix(curr - a, rest)
+        or try_fix(curr / a, rest)
+        or try_fix(unconc(curr, a), rest)
     )
 
 
-with open(HOME/"input.txt") as f:
+with open(HOME / "input.txt") as f:
     total = 0
     for line in tqdm(f):
-        res,parts = line.split(":")
-        a,*rest = [*map(int,parts.split())]
+        res, parts = line.split(":")
         res = int(res)
-        if try_fix(res,a,rest):
+        if try_fix(res, [*map(int, parts.split()[::-1])]):
             total += res
-    print(total) # 12498581459
-
+    print(total)  # 12498581459
