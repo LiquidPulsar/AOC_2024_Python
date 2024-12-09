@@ -7,19 +7,21 @@ HOME = Path(__file__).parent
 
 # tic = perf_counter_ns()
 
-# ofs, size, id
-filesys: list[tuple[int, int, int]] = []
-
 
 def range_sum(start: int, end: int) -> int:
     return start * end + (end * (end - 1)) // 2
 
+
 # hack to make length even
-m = map(int, Path(HOME / "input.txt").read_text() + "0")
+m = map(int, (t := Path(HOME / "input.txt").read_text()) + "0")
+# ofs, size, id
+
+# preallocate space for filesys, barely faster :)
+filesys: list[tuple[int, int, int]] = [None] * (1 + len(t) // 2)  # type: ignore
 freemap: tuple[list[int], ...] = tuple(([] for _ in range(10)))
 ofs = 0
 for idx, (file, free) in enumerate(zip(m, m)):
-    filesys.append((ofs, file, idx))
+    filesys[idx] = (ofs, file, idx)
     ofs += file
     if free:
         heappush(freemap[free], ofs)
