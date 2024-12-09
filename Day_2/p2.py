@@ -16,7 +16,7 @@ def old_safe(line):
 def safe(line):
     parts = [*map(int, line.split())]
     return any(
-        old_safe([*parts[:i], *parts[i+1:]])
+        old_safe(parts[:i]+parts[i+1:])
         for i in range(len(parts))
     )
 
