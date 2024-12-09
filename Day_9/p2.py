@@ -3,6 +3,8 @@ from heapq import heappop, heappush
 
 HOME = Path(__file__).parent
 
+# from time import perf_counter_ns as perf_counter
+# tic = perf_counter()
 
 File = tuple[int, int, int]  # ofs, size, id
 
@@ -33,3 +35,4 @@ for ofs, length, id_ in reversed(filesys):
         total += id_ * sum(range(ofs, ofs + length))
 
 print(total)
+# print((perf_counter()-tic)/1e6, "ms")
