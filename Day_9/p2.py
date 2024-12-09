@@ -20,7 +20,8 @@ for i in range(len(filesys)-1,-1,-1):
     if isinstance(filesys[i], int):
         continue
     _,length = fi = filesys[i]
-    for j,f in enumerate(filesys[:i]):
+    for j in range(i): # avoid making slices
+        f = filesys[j]
         if isinstance(f, tuple):
             continue
         if f == length:
