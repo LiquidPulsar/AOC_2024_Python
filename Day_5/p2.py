@@ -1,20 +1,27 @@
 from collections import defaultdict
 from pathlib import Path
+from functools import cmp_to_key
+
+from time import perf_counter_ns
+
+tic = perf_counter_ns()
 
 HOME = Path(__file__).parent
 
 
-def fix(line):
+def ok(line):
     rest = set(line)
-    for i, n in enumerate(line):
+    for n in line:
         rest.remove(n)
-        if isec := before[n] & rest:
-            loc = max(map(line.index, isec))
-            line[i:loc] = line[i + 1 : loc + 1]
-            line[loc] = n
+        if before[n] & rest:
             return False
     return True
 
+def cmp(a, b):
+    if a in before[b]:
+        return -1
+    return 1 if b in before[a] else 0
+key = cmp_to_key(cmp)
 
 with open(HOME / "input.txt") as f:
     before = defaultdict(set)
@@ -26,9 +33,11 @@ with open(HOME / "input.txt") as f:
     total = 0
     for line in b:
         line = [*map(int, line.split(","))]
-        if not fix(line):
-            while not fix(line):
-                pass
+        if not ok(line):
+            line.sort(key=key)
 
             total += line[len(line) // 2]
     print(total)
+
+print((perf_counter_ns() - tic) / 1e6, "ms")
+assert total == 6004
