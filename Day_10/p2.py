@@ -24,8 +24,9 @@ def dfs(
     return s
 
 
+dct = {}
 print(
     sum(
-        dfs(data, x, y, 0, {}) for y in range(Y) for x in range(X) if data[y][x] == 0
+        dfs(data, x, y, 0, dct) for y in range(Y) for x in range(X) if data[y][x] == 0
     )
 )
