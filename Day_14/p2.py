@@ -1,5 +1,4 @@
 from itertools import count
-from statistics import stdev, mean
 from pathlib import Path
 import re
 
@@ -13,16 +12,12 @@ W = 101
 H = 103
 T = 100
 
-positions = []
-for robot in robots:
-    positions.append(tuple(map(int, robot)))
-
+positions = [tuple(map(int, robot)) for robot in robots]
 ratios = []
 for t in count():
-    new_positions = []
-    for x,y,vx,vy in positions:
-        new_positions.append(((x + vx) % W, (y + vy) % H, vx, vy))
-
+    new_positions = [
+        ((x + vx) % W, (y + vy) % H, vx, vy) for x, y, vx, vy in positions
+    ]
     grid = [[0]*W for _ in range(H)]
     for x,y,_,_ in positions:
         grid[y][x] += 1
