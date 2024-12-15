@@ -5,7 +5,7 @@ import re
 HOME = Path(__file__).parent
 
 games = re.findall(
-    r"X\+(\d+), Y\+(\d+)\n" r".*X\+(\d+), Y\+(\d+)\n" r".*X=(\d+), Y=(\d+)",
+    r"X\+(\d+), Y\+(\d+)\n.*X\+(\d+), Y\+(\d+)\n.*X=(\d+), Y=(\d+)",
     (HOME / "input.txt").read_text(),
 )
 
