@@ -38,30 +38,31 @@ for instr in instrs:
         cy = y + dy
         row = {x}
         rows = []
-        can_move = True
-        while row and can_move:
+        while row:
             rows.append(row)
             next_row = set()
             for cx in row:
                 if grid[cy][cx] == "#":
-                    can_move = False
+                    break
                 elif grid[cy][cx] == "[":
                     next_row.add(cx)
                     next_row.add(cx + 1)
                 elif grid[cy][cx] == "]":
                     next_row.add(cx)
                     next_row.add(cx - 1)
-            row = next_row
-            cy += dy
-        if not can_move:
-            continue
-        for row in rows[::-1]:
-            cy -= dy
-            for cx in row:
-                grid[cy][cx] = grid[cy - dy][cx]
-                grid[cy - dy][cx] = "."
+            else:
+                row = next_row
+                cy += dy
+                continue
+            break
+        else:
+            for row in rows[::-1]:
+                cy -= dy
+                for cx in row:
+                    grid[cy][cx] = grid[cy - dy][cx]
+                    grid[cy - dy][cx] = "."
 
-        y, x = y + dy, x + dx
+            y, x = y + dy, x + dx
 
     # grid[y][x] = instr
     # for row in grid:
