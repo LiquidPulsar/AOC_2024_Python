@@ -1,51 +1,64 @@
 from pathlib import Path
-from collections import deque
 
 HOME = Path(__file__).parent
 
-"""
-O(n) approach: connected component tree, run backwards
-First time we see start component and end component in
-the same connected component, we are done.
-"""
+from time import perf_counter
+
+tick = perf_counter()
 
 data = []
-coords = {}
+coords = set()
 with open(HOME / "input.txt") as f:
-    for i, line in enumerate(f):
+    for line in f:
         x, y = map(int, line.split(","))
-        coords[(x, y)] = i
+        coords.add((x, y))
         data.append((x, y))
 
+
+def floodfill(x, y, seen, parents, i):
+    if x < 0 or y < 0 or x > X or y > Y:
+        return
+    if (x, y) in seen:
+        return
+    if (x,y) in coords:
+        return
+    seen.add((x, y))
+    parents[x][y] = i
+    for dx, dy in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+        floodfill(x + dx, y + dy, seen, parents, i)
+
 X = Y = 70
-def run(limit: int) -> bool:
-    queue = deque([(0, 0, 0)])
-    seen = set()
-    while queue:
-        x, y, d = queue.popleft()
-        if x < 0 or y < 0 or x > X or y > Y:
-            continue
-        if (x, y) in seen:
-            continue
-        if (x, y) == (X, Y):
-            return False
-        seen.add((x, y))
-        if coords.get((x, y), 10000000000) >= limit:
-            queue.extend(
-                (x + dx, y + dy, d + 1) for dx, dy in [(1, 0), (0, 1), (-1, 0), (0, -1)]
-            )
-    return True
 
-lim = 1
-while not run(lim):
-    lim *= 2
+seen = set()
+parents = [[None] * (Y + 1) for _ in range(X + 1)]
+for x in range(X + 1):
+    for y in range(Y + 1):
+        if (x,y) in coords:
+            continue
+        floodfill(x, y, seen, parents, (x,y))
 
-low = lim // 2
-high = lim
-while low < high:
-    mid = (low + high) // 2
-    if run(mid):
-        high = mid
-    else:
-        low = mid + 1
-print(low, data[low-1])
+def find(x, y):
+    while parents[x][y] != (x, y):
+        x, y = parents[x][y]
+    return x, y
+
+def unite(xy1, xy2):
+    # TODO: path compression, union by rank?
+    x1, y1 = find(*xy1)
+    x2, y2 = find(*xy2)
+    parents[x1][y1] = (x2, y2)
+
+for x,y in data[::-1]:
+    # Add pos back in, see what sets it connects
+    parents[x][y] = (x,y)
+    for dx, dy in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+        nx, ny = x + dx, y + dy
+        if 0 <= nx <= X and 0 <= ny <= Y and parents[nx][ny] is not None:
+            unite((x, y), (nx, ny))
+    
+    if find(0, 0) == find(X, Y):
+        print(x, y)
+        break
+
+tock = perf_counter()
+print(tock - tick)
