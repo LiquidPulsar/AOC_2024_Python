@@ -9,12 +9,12 @@ start = (1, len(grid) - 2)
 end = (len(grid[0]) - 2, 1)
 
 heap: list[tuple[int, int, tuple[int, int]]] = [(0, 0, start)]
-dct = defaultdict(lambda: 1000000000000)
+dct = {}
 target_time = None
 while heap:
     t, d, (x, y) = heappop(heap)
     # print(t)
-    if t >= dct[(x, y, d)]:
+    if t >= dct.get((x, y, d), 10000000000):
         continue
     dct[(x, y, d)] = t
 
@@ -31,8 +31,9 @@ while heap:
         nx, ny = x + dx, y + dy
         if grid[ny][nx] != "#":
             # 0 -> 3
-            abs_rot = abs(d - nd)
-            rot = min(abs_rot, 4 - abs_rot)
+            rot = abs(d - nd)
+            if rot > 2:
+                rot = 4 - rot
             heappush(heap, (t + 1 + 1000 * rot, nd, (nx, ny)))
 
 assert target_time is not None
@@ -57,7 +58,8 @@ while stack:
             rot = min(abs_rot, 4 - abs_rot)
             # print([dct.get((nx, ny, i)) for i in range(4)])
             # print((nx, ny, nd),dct[(nx, ny, nd)],t - 1 - 1000 * rot)
-            if dct[(nx, ny, nd)] == t - 1 - 1000 * rot:
-                stack.append((t - 1 - 1000 * rot, nd, (nx, ny)))
+            nt = t - 1 - 1000 * rot
+            if dct.get((nx, ny, nd)) == nt:
+                stack.append((nt, nd, (nx, ny)))
 
 print(len(seen))
