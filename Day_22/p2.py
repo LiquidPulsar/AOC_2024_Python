@@ -66,17 +66,17 @@ skipped_iters = 0
 for d in trange(9, -10, -1):
     if get_best(monkeys, (d,)) <= best_score:
         # print("Skipping", d)
-        skipped_iters += 1000
+        skipped_iters += 19**3
         continue
     for c in range(9, -10, -1):
         if get_best(monkeys, (c,d)) <= best_score:
             # print("Skipping", c,d)
-            skipped_iters += 100
+            skipped_iters += 19**2
             continue
         for b in range(9, -10, -1):
             if get_best(monkeys, (b,c,d)) <= best_score:
                 # print("Skipping", b,c,d)
-                skipped_iters += 10
+                skipped_iters += 19
                 continue
             for a in range(9, -10, -1):
                 target = (a,b,c,d)
