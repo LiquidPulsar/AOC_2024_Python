@@ -1,4 +1,5 @@
 from collections import defaultdict, deque
+from itertools import batched
 from multiprocessing import Pool
 from pathlib import Path
 
@@ -11,29 +12,33 @@ HOME = Path(__file__).parent
 with open(HOME / "input.txt") as f:
     nums = [*map(int, f)]
 
-def worker(num: int) -> dict[tuple[int, int, int, int], int]:
-    window = deque(maxlen=4)
-    prev_price = num
-    dct = {}
-    for _ in range(2000):
-        num ^= num << 6
-        num &= PRUNE
-        num ^= num >> 5
-        num &= PRUNE
-        num ^= num << 11
-        num &= PRUNE
-        price = num % 10
-        window.append(price - prev_price)
-        key = tuple(window)
-        if key not in dct:
-            dct[key] = price
-        prev_price = price
-    return dct
+def worker(nums: list[int]) -> dict[tuple[int, int, int, int], int]:
+    all_dct = defaultdict(int)
+    for num in nums:
+        window = deque(maxlen=4)
+        prev_price = num
+        dct = {}
+        for _ in range(2000):
+            num ^= num << 6
+            num &= PRUNE
+            num ^= num >> 5
+            num &= PRUNE
+            num ^= num << 11
+            num &= PRUNE
+            price = num % 10
+            window.append(price - prev_price)
+            key = tuple(window)
+            if key not in dct:
+                dct[key] = price
+            prev_price = price
+        for k, v in dct.items():
+            all_dct[k] += v
+    return all_dct
 
 if __name__ == "__main__":
     total_dct = defaultdict(int)
     with Pool() as pool:
-        for result in pool.imap_unordered(worker, nums):
+        for result in pool.imap_unordered(worker, batched(nums, 175), chunksize=1): # type: ignore
             for k, v in result.items():
                 total_dct[k] += v
 
