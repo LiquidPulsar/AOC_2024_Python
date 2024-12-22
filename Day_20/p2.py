@@ -26,7 +26,12 @@ while queue:
 
 
 def phases(y, x):
-    for ny in range(max(0, y - 20), min(H-1, y + 21)):
+    # check 20 steps right, and generally down L/R
+    for nx in range(min(W-1, x+1), min(W-1, x + 21)):
+        if grid[y][nx] != "#":
+            yield y, nx, abs(nx - x)
+    
+    for ny in range(min(H-1, y+1), min(H-1, y + 21)):
         rem = 20 - abs(ny - y)
         for nx in range(max(0, x - rem), min(W-1, x + rem + 1)):
             if grid[ny][nx] != "#":
@@ -40,8 +45,9 @@ for y, row in enumerate(grid):
         if c != "#":
             for ny, nx, d in phases(y, x):
                 new_dist = dists[ny][nx]
-                if new_dist < dist:
-                    saves[dist - new_dist - d] += 1
+                dist_delta = abs(dist - new_dist)
+                if dist_delta > d:
+                    saves[dist_delta - d] += 1
 
 # for k in sorted(saves):
 #     if k >= 50:
