@@ -3,24 +3,20 @@ from pathlib import Path
 
 HOME = Path(__file__).parent
 
-conn = defaultdict(list)
+conn = defaultdict(set)
 with open(HOME / "input.txt") as f:
     for line in f:
         a, b = line.rstrip().split("-")
-        conn[a].append(b)
-        conn[b].append(a)
+        conn[a].add(b)
+        conn[b].add(a)
 
 best_len = 0
-best = []
-for a, bs in sorted(conn.items()):
-    s = set(bs)
+best = set()
+for a, bs in conn.items():
     for b in bs:
-        if a < b and (x := (set(conn[b]) & s)):
-            x.add(b)
-            x.add(a)
-
-            if len(x) > best_len and all((set(conn[c]) | {c}) >= x for c in x):
+        if a < b and (x := (conn[b] & bs)):
+            if len(x) > best_len and all((conn[c] | {c}) >= x for c in x):
                 best_len = len(x)
-                best = sorted(x)
+                best = x
 
-print(",".join(best))
+print(",".join(sorted(best)))

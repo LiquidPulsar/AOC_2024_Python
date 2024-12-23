@@ -5,18 +5,17 @@ from more_itertools import ilen
 
 HOME = Path(__file__).parent
 
-conn = defaultdict(list)
+conn = defaultdict(set)
 with open(HOME / "input.txt") as f:
     for line in f:
         a, b = line.rstrip().split("-")
-        conn[a].append(b)
-        conn[b].append(a)
+        conn[a].add(b)
+        conn[b].add(a)
 
 total = 0
-for a, bs in sorted(conn.items()):
-    s = set(bs)
+for a, bs in conn.items():
     for b in bs:
-        if a < b and (x := (set(conn[b]) & s)):
+        if a < b and (x := (conn[b] & bs)):
             lt = (c for c in x if b < c)
             if a[0] == "t" or b[0] == "t":
                 total += ilen(lt)
