@@ -12,7 +12,7 @@ with open(HOME/"input.txt") as f:
 
 @cache
 def solve(design):
-    if not design: return True
+    if not design: return 1
     return sum(
         design.startswith(pattern) and solve(design[len(pattern) :])
         for pattern in patterns
