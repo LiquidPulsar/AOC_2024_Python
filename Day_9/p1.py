@@ -41,7 +41,7 @@ while filesys:
     if length > 0: # unfinished
         done.append((idx,length))
 
-print(done)
+# print(done)
 
 total = ofs = 0
 for idx,length in done:
