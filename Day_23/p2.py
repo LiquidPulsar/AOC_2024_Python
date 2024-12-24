@@ -15,6 +15,8 @@ best = set()
 for a, bs in conn.items():
     for b in bs:
         if a < b and (x := (conn[b] & bs)):
+            x.add(a)
+            x.add(b)
             if len(x) > best_len and all((conn[c] | {c}) >= x for c in x):
                 best_len = len(x)
                 best = x
