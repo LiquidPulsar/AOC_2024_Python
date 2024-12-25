@@ -1,4 +1,3 @@
-from itertools import product
 from pathlib import Path
 
 HOME = Path(__file__).parent
@@ -19,4 +18,4 @@ for image in map(str.splitlines, (HOME / "input.txt").read_text().split("\n\n"))
     else:
         keys.append(heights)
 
-print(sum(all(map(int.__le__, lock, key)) for lock, key in product(locks, keys)))
+print(sum(all(map(int.__le__, lock, key)) for lock in locks for key in keys))
