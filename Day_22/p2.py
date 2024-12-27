@@ -1,5 +1,8 @@
 from collections import defaultdict, deque
-from itertools import batched
+try:
+    from itertools import batched
+except ImportError:
+    from more_itertools import chunked as batched
 from multiprocessing import Pool
 from pathlib import Path
 
@@ -35,7 +38,7 @@ def worker(nums: list[int]) -> dict[tuple[int, int, int, int], int]:
             all_dct[k] += v
     return all_dct
 
-if __name__ == "__main__":
+def main():
     total_dct = defaultdict(int)
     with Pool() as pool:
         for result in pool.imap_unordered(worker, batched(nums, 175), chunksize=1): # type: ignore
@@ -49,3 +52,6 @@ if __name__ == "__main__":
 
     t2 = perf_counter()
     print(t2 - t1)
+
+if __name__ == "__main__":
+    main()
