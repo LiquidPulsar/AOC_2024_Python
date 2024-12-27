@@ -18,7 +18,7 @@ if __name__ == "__main__":
         for p in range(2, 3):
             with redirect_stdout(None), redirect_stderr(NullStream()): # type: ignore
                 t = perf_counter()
-                if n == 22 and p == 2:
+                if n in (6, 22) and p == 2:
                     import_module(f"Day_{n}.p{p}").main()
                 import_module(f"Day_{n}.p{p}")
             print(f"Day {n:02d} Part {p}: {(dt := perf_counter() - t):.7f}s{'!!!'*int(dt / 0.2)}")
